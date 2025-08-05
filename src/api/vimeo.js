@@ -53,6 +53,46 @@ const makeRequest = async (endpoint, params = {}) => {
   }
 };
 
+// NUEVA FUNCIÓN UNIFICADA - UNA SOLA LLAMADA API
+export const processVideoTranscriptUnified = async (videoId, onProgress) => {
+  try {
+    if (onProgress) onProgress(`Procesando video ${videoId}...`);
+    
+    // Una sola llamada que hace todo el procesamiento
+    const result = await makeRequest('vimeo-process', { videoId });
+    
+    if (result.status === 'error') {
+      throw new VimeoAPIError(result.error, 404, videoId);
+    }
+
+    if (onProgress) onProgress(`¡Video ${videoId} procesado exitosamente!`);
+
+    return {
+      videoId: result.videoId,
+      title: result.title,
+      transcript: result.transcript,
+      language: result.language,
+      trackName: result.trackName
+    };
+
+  } catch (error) {
+    if (error instanceof VimeoAPIError) {
+      throw error;
+    }
+    throw new VimeoAPIError(
+      `Error procesando video ${videoId}: ${error.message}`,
+      error.status || 500,
+      videoId
+    );
+  }
+};
+
+// FUNCIÓN PRINCIPAL ACTUALIZADA
+export const processVideoTranscript = processVideoTranscriptUnified;
+
+// ===============================
+// FUNCIONES LEGACY (por si acaso)
+// ===============================
 export const getVideoTextTracks = async (videoId) => {
   try {
     const data = await makeRequest('vimeo-texttracks', { videoId });
@@ -92,7 +132,8 @@ export const getVideoInfo = async (videoId) => {
   }
 };
 
-export const processVideoTranscript = async (videoId, onProgress) => {
+// FUNCIÓN LEGACY ORIGINAL (mantenerla por compatibilidad)
+export const processVideoTranscriptLegacy = async (videoId, onProgress) => {
   try {
     let videoTitle = `Video ${videoId}`;
     
@@ -102,7 +143,6 @@ export const processVideoTranscript = async (videoId, onProgress) => {
       const videoInfo = await getVideoInfo(videoId);
       videoTitle = videoInfo.name || `Video ${videoId}`;
     } catch (error) {
-      // console.warn(`No se pudo obtener el título del video ${videoId}:`, error.message);
       // Continuar sin el título, no es crítico
     }
     
@@ -132,10 +172,8 @@ export const processVideoTranscript = async (videoId, onProgress) => {
     // Procesar los cues para convertirlos en texto plano
     let transcriptText = '';
     if (transcriptResponse.data && Array.isArray(transcriptResponse.data)) {
-      // La respuesta de Vimeo tiene la estructura: { data: [{ lines: [{ text: "..." }] }] }
       transcriptText = transcriptResponse.data
         .map(cue => {
-          // Extraer el texto de cada cue desde lines[0].text
           if (cue.lines && Array.isArray(cue.lines) && cue.lines[0] && cue.lines[0].text) {
             return cue.lines[0].text;
           }
@@ -146,7 +184,6 @@ export const processVideoTranscript = async (videoId, onProgress) => {
         .replace(/\s+/g, ' ')
         .trim();
     } else if (transcriptResponse.cues && Array.isArray(transcriptResponse.cues)) {
-      // Fallback para formato anterior (por si acaso)
       transcriptText = transcriptResponse.cues
         .map(cue => cue.text)
         .filter(text => text && text.trim())
@@ -154,7 +191,6 @@ export const processVideoTranscript = async (videoId, onProgress) => {
         .replace(/\s+/g, ' ')
         .trim();
     } else if (transcriptResponse.transcript) {
-      // Algunas respuestas pueden venir directamente con el texto
       transcriptText = transcriptResponse.transcript;
     }
 
