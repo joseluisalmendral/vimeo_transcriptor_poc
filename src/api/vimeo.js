@@ -77,7 +77,7 @@ export const processVideoTranscript = async (videoId, onProgress) => {
       const videoInfo = await getVideoInfo(videoId);
       videoTitle = videoInfo.name || `Video ${videoId}`;
     } catch (error) {
-      console.warn(`No se pudo obtener el título del video ${videoId}:`, error.message);
+      // console.warn(`No se pudo obtener el título del video ${videoId}:`, error.message);
       // Continuar sin el título, no es crítico
     }
     

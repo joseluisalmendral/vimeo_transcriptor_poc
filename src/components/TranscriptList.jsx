@@ -123,7 +123,7 @@ const TranscriptList = ({ results }) => {
                         button.textContent = originalText;
                       }, 2000);
                     } catch (error) {
-                      console.error('Error copiando:', error);
+                      // console.error('Error copiando:', error);
                     }
                   }
                 }}

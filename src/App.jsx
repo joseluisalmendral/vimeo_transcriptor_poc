@@ -51,7 +51,7 @@ function App() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                📹 Vimeo Transcriptor
+                ThePower Vimeo Transcriptor
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-2">
                 Extrae transcripciones automáticas de videos de Vimeo de forma masiva
@@ -164,7 +164,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
             <p>
-              Creado con ❤️ usando React 19, Vite y Tailwind v4.1 • 
+              Creado por <a href="https://github.com/joseluisalmendral" target='_blank' className='font-black'>Pepelu</a> • 
               <a 
                 href="https://developer.vimeo.com/api" 
                 target="_blank" 

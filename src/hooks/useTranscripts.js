@@ -50,7 +50,7 @@ export const useTranscripts = () => {
 
               setProgress(prev => ({ ...prev, current: prev.current + 1 }));
 
-              console.log('Resultado procesado:', result); // Debug log
+              // console.log('Resultado procesado:', result); // Debug log
 
               return {
                 originalUrl: urlData.originalUrl,
@@ -127,7 +127,7 @@ export const useTranscripts = () => {
       setCurrentStatus('¡Proceso completado!');
 
     } catch (error) {
-      console.error('Error procesando URLs:', error);
+      // console.error('Error procesando URLs:', error);
       setCurrentStatus('Error procesando las URLs');
     } finally {
       setIsProcessing(false);
