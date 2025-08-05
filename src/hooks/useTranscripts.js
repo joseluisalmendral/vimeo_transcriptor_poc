@@ -50,9 +50,12 @@ export const useTranscripts = () => {
 
               setProgress(prev => ({ ...prev, current: prev.current + 1 }));
 
+              console.log('Resultado procesado:', result); // Debug log
+
               return {
                 originalUrl: urlData.originalUrl,
                 videoId: urlData.videoId,
+                title: result.title, // Asegurar que se pasa el título
                 transcript: result.transcript,
                 language: result.language,
                 trackName: result.trackName,

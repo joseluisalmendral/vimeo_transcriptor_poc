@@ -53,8 +53,34 @@ export const getTranscript = async (videoId, textTrackId) => {
   }
 };
 
+export const getVideoInfo = async (videoId) => {
+  try {
+    const url = `${VIMEO_API_BASE}/videos/${videoId}?fields=name`;
+    const data = await makeRequest(url);
+    return data;
+  } catch (error) {
+    throw new VimeoAPIError(
+      `Error fetching video info: ${error.message}`,
+      error.status || 500,
+      videoId
+    );
+  }
+};
+
 export const processVideoTranscript = async (videoId, onProgress) => {
   try {
+    let videoTitle = `Video ${videoId}`;
+    
+    // Intentar obtener el título del video
+    try {
+      if (onProgress) onProgress(`Obteniendo información del video ${videoId}...`);
+      const videoInfo = await getVideoInfo(videoId);
+      videoTitle = videoInfo.name || `Video ${videoId}`;
+    } catch (error) {
+      console.warn(`No se pudo obtener el título del video ${videoId}:`, error.message);
+      // Continuar sin el título, no es crítico
+    }
+    
     if (onProgress) onProgress(`Obteniendo pistas de texto para video ${videoId}...`);
     
     // Obtener las pistas de texto disponibles
@@ -113,6 +139,7 @@ export const processVideoTranscript = async (videoId, onProgress) => {
 
     return {
       videoId,
+      title: videoTitle,
       transcript: transcriptText,
       language: autoTrack.language,
       trackName: autoTrack.name || 'Transcripción automática'

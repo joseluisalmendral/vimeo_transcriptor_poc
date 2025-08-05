@@ -82,7 +82,7 @@ const TranscriptList = ({ results }) => {
                 onClick={() => {
                   const allTranscripts = results
                     .filter(r => r.status === 'success' && r.transcript)
-                    .map(r => `=== Video ${r.videoId} ===\nURL: ${r.originalUrl}\n\n${r.transcript}\n\n`)
+                    .map(r => `=== ${r.title || `Video ${r.videoId}`} ===\nURL: ${r.originalUrl}\n\n${r.transcript}\n\n`)
                     .join('');
                   
                   if (allTranscripts) {
@@ -109,7 +109,7 @@ const TranscriptList = ({ results }) => {
                 onClick={async () => {
                   const allTranscripts = results
                     .filter(r => r.status === 'success' && r.transcript)
-                    .map(r => `=== Video ${r.videoId} ===\n${r.transcript}`)
+                    .map(r => `=== ${r.title || `Video ${r.videoId}`} ===\n${r.transcript}`)
                     .join('\n\n');
                   
                   if (allTranscripts) {

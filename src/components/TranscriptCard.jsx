@@ -5,6 +5,12 @@ const TranscriptCard = ({ result }) => {
   const [copyStatus, setCopyStatus] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Función para truncar el título
+  const truncateTitle = (title, maxLength = 60) => {
+    if (!title || title.length <= maxLength) return title;
+    return title.substring(0, maxLength).trim() + '...';
+  };
+
   const handleCopy = async () => {
     if (!result.transcript) return;
 
@@ -21,8 +27,16 @@ const TranscriptCard = ({ result }) => {
   const handleDownload = () => {
     if (!result.transcript) return;
     
-    const filename = `transcript_${result.videoId}_${Date.now()}.txt`;
+    // Crear nombre de archivo seguro basado en el título del video
+    const sanitizeFilename = (name) => {
+      return name.replace(/[^a-z0-9\s\-\_]/gi, '').replace(/\s+/g, '_').substring(0, 50);
+    };
+    
+    const safeTitle = result.title ? sanitizeFilename(result.title) : `video_${result.videoId}`;
+    const filename = `transcript_${safeTitle}_${Date.now()}.txt`;
+    
     const content = `Transcripción de Vimeo\n` +
+                   `Título: ${result.title || 'Sin título'}\n` +
                    `Video ID: ${result.videoId}\n` +
                    `URL Original: ${result.originalUrl}\n` +
                    `Idioma: ${result.language || 'N/A'}\n` +
@@ -44,17 +58,24 @@ const TranscriptCard = ({ result }) => {
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
-              Video {result.videoId || 'Desconocido'}
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1" title={result.title || `Video ${result.videoId || 'Desconocido'}`}>
+              {truncateTitle(result.title || `Video ${result.videoId || 'Desconocido'}`)}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 truncate" title={result.originalUrl}>
               {result.originalUrl}
             </p>
-            {result.language && (
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                {result.trackName} ({result.language})
-              </p>
-            )}
+            <div className="flex items-center gap-3 mt-1">
+              {result.language && (
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                  {result.trackName} ({result.language})
+                </p>
+              )}
+              {result.videoId && (
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                  ID: {result.videoId}
+                </p>
+              )}
+            </div>
           </div>
           
           {/* Status Badge */}
@@ -82,15 +103,19 @@ const TranscriptCard = ({ result }) => {
               </div>
               
               <div className="relative">
-                <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap font-sans leading-relaxed max-h-32 overflow-hidden">
+                <pre className={`text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap font-sans leading-relaxed ${
+                  isExpanded ? 'max-h-none' : 'max-h-32 overflow-hidden'
+                }`}>
                   {isExpanded ? result.transcript : truncatedTranscript}
                 </pre>
                 
                 {result.transcript.length > 300 && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-50 dark:from-gray-900 to-transparent h-8 flex items-end justify-center">
+                  <div className={`${
+                    isExpanded ? 'static mt-3' : 'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-50 dark:from-gray-900 to-transparent h-8'
+                  } flex ${isExpanded ? 'justify-start' : 'items-end justify-center'}`}>
                     <button
                       onClick={() => setIsExpanded(!isExpanded)}
-                      className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium bg-gray-50 dark:bg-gray-900 px-2 py-1"
+                      className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium bg-gray-50 dark:bg-gray-900 px-2 py-1 rounded"
                     >
                       {isExpanded ? 'Ver menos' : 'Ver más'}
                     </button>
