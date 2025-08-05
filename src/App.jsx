@@ -3,6 +3,8 @@ import UrlInput from './components/UrlInput';
 import LoadingJokes from './components/LoadingJokes';
 import TranscriptList from './components/TranscriptList';
 import { useTranscripts } from './hooks/useTranscripts';
+import { Analytics } from '@vercel/analytics/react';
+
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -39,9 +41,6 @@ function App() {
   const handleReset = () => {
     resetResults();
   };
-
-  // Verificar si hay token de Vimeo
-  const hasVimeoToken = !!import.meta.env.VITE_VIMEO_ACCESS_TOKEN;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
@@ -81,28 +80,6 @@ function App() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
-          {/* Token Warning */}
-          {!hasVimeoToken && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <div className="text-red-500 text-xl flex-shrink-0">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-red-800 dark:text-red-200 font-medium mb-1">
-                    Token de Vimeo requerido
-                  </h3>
-                  <p className="text-red-700 dark:text-red-300 text-sm">
-                    Necesitas configurar tu token de acceso de Vimeo en el archivo <code>.env.development</code> 
-                    o en las variables de entorno de Vercel. Consulta el README para más información.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Instructions */}
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">
@@ -123,7 +100,7 @@ function App() {
               </li>
             </ul>
             <p className="text-blue-700 dark:text-blue-300 text-xs mt-3 font-medium">
-              💡 Solo funcionará con videos que tengan transcripciones automáticas habilitadas y con el token correcto.
+              💡 Solo funcionará con videos que tengan transcripciones automáticas habilitadas y con el token correcto configurado en el servidor.
             </p>
           </div>
 
@@ -177,6 +154,8 @@ function App() {
           </div>
         </div>
       </footer>
+
+      <Analytics />
     </div>
   );
 }

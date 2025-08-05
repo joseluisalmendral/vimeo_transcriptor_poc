@@ -1,6 +1,4 @@
-const VIMEO_ACCESS_TOKEN = import.meta.env.VITE_VIMEO_ACCESS_TOKEN;
-const VIMEO_API_BASE = 'https://api.vimeo.com';
-
+// src/api/vimeo.js
 class VimeoAPIError extends Error {
   constructor(message, status, videoId) {
     super(message);
@@ -10,25 +8,54 @@ class VimeoAPIError extends Error {
   }
 }
 
-const makeRequest = async (url) => {
-  const response = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${VIMEO_ACCESS_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+// Determinar la URL base para las APIs
+const getApiBaseUrl = () => {
+  // En desarrollo con Vite
+  if (import.meta.env.DEV) {
+    return 'http://localhost:3000'; // vercel dev usa puerto 3000 por defecto
   }
+  
+  // En producción en Vercel
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  
+  // Fallback
+  return '';
+};
 
-  return response.json();
+const API_BASE_URL = getApiBaseUrl();
+
+const makeRequest = async (endpoint, params = {}) => {
+  const searchParams = new URLSearchParams(params);
+  const url = `${API_BASE_URL}/api/${endpoint}?${searchParams}`;
+  
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      // Error de red/conexión
+      throw new Error('Error de conexión: Verifica que el servidor esté funcionando');
+    }
+    throw error;
+  }
 };
 
 export const getVideoTextTracks = async (videoId) => {
   try {
-    const url = `${VIMEO_API_BASE}/videos/${videoId}/texttracks?include_transcript=true`;
-    const data = await makeRequest(url);
+    const data = await makeRequest('vimeo-texttracks', { videoId });
     return data;
   } catch (error) {
     throw new VimeoAPIError(
@@ -41,8 +68,7 @@ export const getVideoTextTracks = async (videoId) => {
 
 export const getTranscript = async (videoId, textTrackId) => {
   try {
-    const url = `${VIMEO_API_BASE}/videos/${videoId}/transcripts/${textTrackId}`;
-    const data = await makeRequest(url);
+    const data = await makeRequest('vimeo-transcript', { videoId, textTrackId });
     return data;
   } catch (error) {
     throw new VimeoAPIError(
@@ -55,8 +81,7 @@ export const getTranscript = async (videoId, textTrackId) => {
 
 export const getVideoInfo = async (videoId) => {
   try {
-    const url = `${VIMEO_API_BASE}/videos/${videoId}?fields=name`;
-    const data = await makeRequest(url);
+    const data = await makeRequest('vimeo-video-info', { videoId });
     return data;
   } catch (error) {
     throw new VimeoAPIError(
