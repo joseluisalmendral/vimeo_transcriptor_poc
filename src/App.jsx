@@ -19,11 +19,14 @@ import { useTranscripts } from './hooks/useTranscripts';
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
     // Inicializar desde localStorage o preferencia del sistema
-    const saved = localStorage.getItem('theme');
-    if (saved) {
-      return saved === 'dark';
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('vimeo-theme');
+      if (saved) {
+        return saved === 'dark';
+      }
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return false;
   });
 
   const [showInstructions, setShowInstructions] = useState(false);
@@ -40,12 +43,15 @@ function App() {
 
   // Manejar cambios de tema
   useEffect(() => {
+    const root = document.documentElement;
+    console.log('Applying theme:', darkMode ? 'dark' : 'light'); // Debug temporal
+    
     if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      root.classList.add('dark');
+      localStorage.setItem('vimeo-theme', 'dark');
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      root.classList.remove('dark');
+      localStorage.setItem('vimeo-theme', 'light');
     }
   }, [darkMode]);
 
@@ -53,7 +59,8 @@ function App() {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e) => {
-      if (!localStorage.getItem('theme')) {
+      // Solo cambiar automáticamente si no hay preferencia guardada
+      if (!localStorage.getItem('vimeo-theme')) {
         setDarkMode(e.matches);
       }
     };
@@ -82,13 +89,14 @@ function App() {
   };
 
   const handleThemeToggle = (checked) => {
+    console.log('Theme toggle clicked:', checked); // Debug temporal
     setDarkMode(checked);
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 transition-colors duration-300">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
@@ -268,7 +276,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-200 dark:border-zinc-800 mt-16">
+      <footer className="border-t border-zinc-300 dark:border-zinc-800 mt-16 bg-white/50 dark:bg-zinc-950/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-center md:text-left">

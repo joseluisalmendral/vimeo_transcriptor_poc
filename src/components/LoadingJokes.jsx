@@ -27,7 +27,7 @@ const LoadingJokes = ({ isVisible, progress, currentStatus }) => {
   const progressPercentage = progress.total > 0 ? (progress.current / progress.total) * 100 : 0;
 
   return (
-    <Card className="w-full bg-gradient-to-br from-violet-50 to-emerald-50 dark:from-zinc-900 dark:to-zinc-800 border-violet-200 dark:border-zinc-700">
+    <Card className="w-full bg-gradient-to-br from-violet-50 to-emerald-50 dark:from-zinc-900 dark:to-zinc-800 border-violet-200 dark:border-zinc-700 shadow-lg">
       <CardContent className="p-8">
         <div className="text-center space-y-6">
           {/* Animated Spinner */}
@@ -60,7 +60,7 @@ const LoadingJokes = ({ isVisible, progress, currentStatus }) => {
 
           {/* Current Status */}
           {currentStatus && (
-            <Card className="bg-white/50 dark:bg-zinc-800/50 border-white/20 dark:border-zinc-700/50">
+            <Card className="bg-white/80 dark:bg-zinc-800/50 border-white/30 dark:border-zinc-700/50 shadow-sm">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
@@ -75,7 +75,7 @@ const LoadingJokes = ({ isVisible, progress, currentStatus }) => {
           <Separator className="bg-zinc-200 dark:bg-zinc-800" />
 
           {/* Joke Section */}
-          <Card className="bg-white/70 dark:bg-zinc-800/70 border-white/30 dark:border-zinc-700/30">
+          <Card className="bg-white/90 dark:bg-zinc-800/70 border-white/40 dark:border-zinc-700/30 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Smile className="w-5 h-5 text-amber-500" />
