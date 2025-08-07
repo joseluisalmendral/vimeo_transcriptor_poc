@@ -1,6 +1,21 @@
 import TranscriptCard from './TranscriptCard';
+import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Separator } from './ui/separator';
+import { useToast } from '../hooks/use-toast';
+import { 
+  Download, 
+  Copy, 
+  CheckCircle, 
+  XCircle, 
+  FileText, 
+  TrendingUp,
+  AlertTriangle
+} from 'lucide-react';
 
 const TranscriptList = ({ results }) => {
+  const { toast } = useToast();
+
   if (!results || results.length === 0) {
     return null;
   }
@@ -8,56 +23,128 @@ const TranscriptList = ({ results }) => {
   const successCount = results.filter(r => r.status === 'success').length;
   const errorCount = results.filter(r => r.status === 'error').length;
 
-  return (
-    <div className="w-full max-w-6xl mx-auto">
-      {/* Summary */}
-      <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          Resultados del Procesamiento
-        </h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-              {results.length}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Videos Procesados
-            </div>
-          </div>
-          
-          <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-              {successCount}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Transcripciones Exitosas
-            </div>
-          </div>
-          
-          <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-            <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-              {errorCount}
-            </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Con Errores
-            </div>
-          </div>
-        </div>
+  const handleDownloadAll = () => {
+    const allTranscripts = results
+      .filter(r => r.status === 'success' && r.transcript)
+      .map(r => `=== ${r.title || `Video ${r.videoId}`} ===\nURL: ${r.originalUrl}\n\n${r.transcript}\n\n`)
+      .join('');
+    
+    if (allTranscripts) {
+      const blob = new Blob([allTranscripts], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `all_transcripts_${Date.now()}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "¡Descarga iniciada!",
+        description: `Descargando ${successCount} transcripción${successCount !== 1 ? 'es' : ''}`,
+      });
+    }
+  };
 
-        {successCount > 0 && (
-          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <div className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-              <span className="text-sm font-medium">
-                ¡Perfecto! Se han procesado exitosamente {successCount} transcripción{successCount !== 1 ? 'es' : ''}.
-              </span>
+  const handleCopyAll = async () => {
+    const allTranscripts = results
+      .filter(r => r.status === 'success' && r.transcript)
+      .map(r => `=== ${r.title || `Video ${r.videoId}`} ===\n${r.transcript}`)
+      .join('\n\n');
+    
+    if (allTranscripts) {
+      try {
+        await navigator.clipboard.writeText(allTranscripts);
+        toast({
+          title: "¡Copiado!",
+          description: `${successCount} transcripción${successCount !== 1 ? 'es' : ''} copiada${successCount !== 1 ? 's' : ''} al portapapeles`,
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "No se pudo copiar al portapapeles",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  return (
+    <div className="w-full space-y-8">
+      {/* Summary */}
+      <Card className="border-2 border-dashed border-gray-200 dark:border-gray-800">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5" />
+            Resultados del Procesamiento
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="text-center p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                {results.length}
+              </div>
+              <div className="text-sm text-blue-700 dark:text-blue-300 font-medium">
+                Videos Procesados
+              </div>
+              <FileText className="w-6 h-6 mx-auto mt-2 text-blue-500 dark:text-blue-400" />
+            </div>
+            
+            <div className="text-center p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+              <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">
+                {successCount}
+              </div>
+              <div className="text-sm text-green-700 dark:text-green-300 font-medium">
+                Transcripciones Exitosas
+              </div>
+              <CheckCircle className="w-6 h-6 mx-auto mt-2 text-green-500 dark:text-green-400" />
+            </div>
+            
+            <div className="text-center p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
+              <div className="text-3xl font-bold text-red-600 dark:text-red-400 mb-1">
+                {errorCount}
+              </div>
+              <div className="text-sm text-red-700 dark:text-red-300 font-medium">
+                Con Errores
+              </div>
+              <XCircle className="w-6 h-6 mx-auto mt-2 text-red-500 dark:text-red-400" />
             </div>
           </div>
-        )}
-      </div>
+
+          {/* Success Message */}
+          {successCount > 0 && (
+            <div className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
+              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                  ¡Perfecto! Se han procesado exitosamente {successCount} transcripción{successCount !== 1 ? 'es' : ''}.
+                </p>
+                <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                  Puedes copiar o descargar las transcripciones individualmente o todas juntas.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Error Message */}
+          {errorCount > 0 && (
+            <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                  {errorCount} video{errorCount !== 1 ? 's' : ''} no se pudo{errorCount !== 1 ? 'ieron' : ''} procesar.
+                </p>
+                <p className="text-xs text-red-700 dark:text-red-300 mt-1">
+                  Verifica que los videos tengan transcripciones automáticas habilitadas.
+                </p>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Results Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -69,74 +156,41 @@ const TranscriptList = ({ results }) => {
         ))}
       </div>
 
-      {/* Action Buttons */}
+      {/* Global Actions */}
       {successCount > 0 && (
-        <div className="mt-8 text-center">
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-              Acciones Globales
-            </h3>
-            
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button
-                onClick={() => {
-                  const allTranscripts = results
-                    .filter(r => r.status === 'success' && r.transcript)
-                    .map(r => `=== ${r.title || `Video ${r.videoId}`} ===\nURL: ${r.originalUrl}\n\n${r.transcript}\n\n`)
-                    .join('');
-                  
-                  if (allTranscripts) {
-                    const blob = new Blob([allTranscripts], { type: 'text/plain;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = `all_transcripts_${Date.now()}.txt`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                  }
-                }}
-                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Acciones Globales</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Button
+                onClick={handleDownloadAll}
+                className="flex items-center justify-center gap-2"
+                size="lg"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Descargar Todas las Transcripciones
-              </button>
+                <Download className="w-5 h-5" />
+                Descargar Todas ({successCount})
+              </Button>
               
-              <button
-                onClick={async () => {
-                  const allTranscripts = results
-                    .filter(r => r.status === 'success' && r.transcript)
-                    .map(r => `=== ${r.title || `Video ${r.videoId}`} ===\n${r.transcript}`)
-                    .join('\n\n');
-                  
-                  if (allTranscripts) {
-                    try {
-                      await navigator.clipboard.writeText(allTranscripts);
-                      // Mostrar confirmación temporal
-                      const button = event.target.closest('button');
-                      const originalText = button.textContent;
-                      button.textContent = '¡Copiado!';
-                      setTimeout(() => {
-                        button.textContent = originalText;
-                      }, 2000);
-                    } catch (error) {
-                      // console.error('Error copiando:', error);
-                    }
-                  }
-                }}
-                className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              <Button
+                variant="outline"
+                onClick={handleCopyAll}
+                className="flex items-center justify-center gap-2"
+                size="lg"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                </svg>
-                Copiar Todas al Portapapeles
-              </button>
+                <Copy className="w-5 h-5" />
+                Copiar Todas ({successCount})
+              </Button>
             </div>
-          </div>
-        </div>
+            
+            <Separator className="my-4" />
+            
+            <div className="text-center text-xs text-gray-500 dark:text-gray-400">
+              {successCount > 1 ? 'Las transcripciones se combinarán' : 'La transcripción se procesará'} en un solo archivo
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
