@@ -79,19 +79,19 @@ const TranscriptCard = ({ result }) => {
     : result.transcript;
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 border border-gray-200 dark:border-gray-800">
+    <Card className="hover:shadow-lg transition-all duration-200 border border-zinc-200 dark:border-zinc-800">
       <CardHeader className="pb-4">
         {/* Status Badge & Title */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0 space-y-2">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-              <CardTitle className="text-lg truncate" title={result.title || `Video ${result.videoId || 'Desconocido'}`}>
+              <FileText className="w-4 h-4 text-zinc-500 dark:text-zinc-400 flex-shrink-0" />
+              <CardTitle className="text-lg truncate text-zinc-900 dark:text-zinc-100" title={result.title || `Video ${result.videoId || 'Desconocido'}`}>
                 {truncateTitle(result.title || `Video ${result.videoId || 'Desconocido'}`)}
               </CardTitle>
             </div>
             
-            <CardDescription className="flex items-center gap-2 text-sm">
+            <CardDescription className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
               <ExternalLink className="w-3 h-3 flex-shrink-0" />
               <span className="truncate" title={result.originalUrl}>
                 {result.originalUrl}
@@ -102,7 +102,7 @@ const TranscriptCard = ({ result }) => {
           {/* Status Badge */}
           <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
             result.status === 'success'
-              ? 'bg-green-100 dark:bg-green-950/30 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800'
+              ? 'bg-emerald-100 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800'
               : 'bg-red-100 dark:bg-red-950/30 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800'
           }`}>
             {result.status === 'success' ? (
@@ -116,7 +116,7 @@ const TranscriptCard = ({ result }) => {
 
         {/* Metadata */}
         {result.status === 'success' && (
-          <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+          <div className="flex flex-wrap items-center gap-4 text-xs text-zinc-500 dark:text-zinc-400">
             {result.language && (
               <div className="flex items-center gap-1">
                 <Globe className="w-3 h-3" />
@@ -130,7 +130,7 @@ const TranscriptCard = ({ result }) => {
               </div>
             )}
             {result.trackName && (
-              <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+              <span className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-xs">
                 {result.trackName}
               </span>
             )}
@@ -138,25 +138,25 @@ const TranscriptCard = ({ result }) => {
         )}
       </CardHeader>
 
-      <Separator />
+      <Separator className="bg-zinc-200 dark:bg-zinc-800" />
 
       <CardContent className="pt-4">
         {result.status === 'success' && result.transcript ? (
           <div className="space-y-4">
             {/* Transcript Content */}
-            <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
+            <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-800">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                <h4 className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
                   <FileText className="w-4 h-4" />
                   Transcripción
                 </h4>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
+                <div className="text-xs text-zinc-500 dark:text-zinc-400">
                   {result.transcript.length.toLocaleString()} caracteres
                 </div>
               </div>
               
               <div className="relative">
-                <pre className={`text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap font-sans leading-relaxed ${
+                <pre className={`text-sm text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap font-sans leading-relaxed ${
                   isExpanded ? 'max-h-none' : 'max-h-32 overflow-hidden'
                 }`}>
                   {isExpanded ? result.transcript : truncatedTranscript}
@@ -164,13 +164,13 @@ const TranscriptCard = ({ result }) => {
                 
                 {result.transcript.length > 300 && (
                   <div className={`${
-                    isExpanded ? 'static mt-3' : 'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-50 dark:from-gray-900/50 to-transparent h-8'
+                    isExpanded ? 'static mt-3' : 'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-zinc-50 dark:from-zinc-900/50 to-transparent h-8'
                   } flex ${isExpanded ? 'justify-start' : 'items-end justify-center'}`}>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setIsExpanded(!isExpanded)}
-                      className="text-xs bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      className="text-xs bg-zinc-50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                     >
                       {isExpanded ? (
                         <>

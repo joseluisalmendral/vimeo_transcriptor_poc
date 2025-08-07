@@ -38,10 +38,10 @@ const UrlInput = ({ onSubmit, isProcessing, onReset }) => {
   const invalidCount = previewUrls.filter(url => !url.isValid).length;
 
   return (
-    <Card className="w-full">
+    <Card className="w-full border-zinc-200 dark:border-zinc-800">
       <CardHeader>
-        <CardTitle>URLs de Vimeo</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-zinc-900 dark:text-zinc-100">URLs de Vimeo</CardTitle>
+        <CardDescription className="text-zinc-600 dark:text-zinc-400">
           Pega aquí las URLs de Vimeo que quieres procesar
         </CardDescription>
       </CardHeader>
@@ -60,10 +60,10 @@ Ejemplos:
 https://vimeo.com/1021420858/52b8cbc1dc
 https://vimeo.com/846914777/d2eb34adb1
 https://vimeo.com/123456789`}
-              className="w-full h-32 px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg 
-                         bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 
-                         placeholder-gray-500 dark:placeholder-gray-400 
-                         focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500
+              className="w-full h-32 px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-800 rounded-lg 
+                         bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 
+                         placeholder-zinc-500 dark:placeholder-zinc-400 
+                         focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:focus:ring-zinc-500
                          disabled:opacity-50 disabled:cursor-not-allowed
                          resize-none transition-colors"
               rows={6}
@@ -72,15 +72,15 @@ https://vimeo.com/123456789`}
 
           {/* Preview de URLs */}
           {previewUrls.length > 0 && (
-            <Card className="bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-800">
+            <Card className="bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm">
+                  <CardTitle className="text-sm text-zinc-900 dark:text-zinc-100">
                     Vista previa
                   </CardTitle>
-                  <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-400">
                     <div className="flex items-center gap-1">
-                      <CheckCircle className="w-3 h-3 text-green-500" />
+                      <CheckCircle className="w-3 h-3 text-emerald-500" />
                       <span>{validCount} válidas</span>
                     </div>
                     {invalidCount > 0 && (
@@ -100,28 +100,28 @@ https://vimeo.com/123456789`}
                       key={index}
                       className={`flex items-center justify-between p-3 rounded-lg text-sm transition-colors ${
                         url.isValid
-                          ? 'bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900'
                           : 'bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900'
                       }`}
                     >
                       <div className="flex-1 min-w-0 space-y-1">
                         <p className={`font-mono text-xs truncate ${
                           url.isValid 
-                            ? 'text-green-800 dark:text-green-200' 
+                            ? 'text-emerald-800 dark:text-emerald-200' 
                             : 'text-red-800 dark:text-red-200'
                         }`}>
                           {url.originalUrl}
                         </p>
                         <p className={`text-xs ${
                           url.isValid 
-                            ? 'text-green-600 dark:text-green-400' 
+                            ? 'text-emerald-600 dark:text-emerald-400' 
                             : 'text-red-600 dark:text-red-400'
                         }`}>
                           {url.isValid ? `ID: ${url.videoId}` : url.error}
                         </p>
                       </div>
                       <div className={`ml-3 w-2 h-2 rounded-full flex-shrink-0 ${
-                        url.isValid ? 'bg-green-500' : 'bg-red-500'
+                        url.isValid ? 'bg-emerald-500' : 'bg-red-500'
                       }`} />
                     </div>
                   ))}

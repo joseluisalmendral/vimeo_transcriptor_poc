@@ -73,9 +73,9 @@ const TranscriptList = ({ results }) => {
   return (
     <div className="w-full space-y-8">
       {/* Summary */}
-      <Card className="border-2 border-dashed border-gray-200 dark:border-gray-800">
+      <Card className="border-2 border-dashed border-zinc-200 dark:border-zinc-800">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
             <TrendingUp className="w-5 h-5" />
             Resultados del Procesamiento
           </CardTitle>
@@ -83,24 +83,24 @@ const TranscriptList = ({ results }) => {
         
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="text-center p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+            <div className="text-center p-4 bg-violet-50 dark:bg-violet-950/20 rounded-lg border border-violet-200 dark:border-violet-800">
+              <div className="text-3xl font-bold text-violet-600 dark:text-violet-400 mb-1">
                 {results.length}
               </div>
-              <div className="text-sm text-blue-700 dark:text-blue-300 font-medium">
+              <div className="text-sm text-violet-700 dark:text-violet-300 font-medium">
                 Videos Procesados
               </div>
-              <FileText className="w-6 h-6 mx-auto mt-2 text-blue-500 dark:text-blue-400" />
+              <FileText className="w-6 h-6 mx-auto mt-2 text-violet-500 dark:text-violet-400" />
             </div>
             
-            <div className="text-center p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">
+            <div className="text-center p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+              <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">
                 {successCount}
               </div>
-              <div className="text-sm text-green-700 dark:text-green-300 font-medium">
+              <div className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
                 Transcripciones Exitosas
               </div>
-              <CheckCircle className="w-6 h-6 mx-auto mt-2 text-green-500 dark:text-green-400" />
+              <CheckCircle className="w-6 h-6 mx-auto mt-2 text-emerald-500 dark:text-emerald-400" />
             </div>
             
             <div className="text-center p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
@@ -116,13 +116,13 @@ const TranscriptList = ({ results }) => {
 
           {/* Success Message */}
           {successCount > 0 && (
-            <div className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
-              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 mb-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+              <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
                   ¡Perfecto! Se han procesado exitosamente {successCount} transcripción{successCount !== 1 ? 'es' : ''}.
                 </p>
-                <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1">
                   Puedes copiar o descargar las transcripciones individualmente o todas juntas.
                 </p>
               </div>
@@ -158,9 +158,9 @@ const TranscriptList = ({ results }) => {
 
       {/* Global Actions */}
       {successCount > 0 && (
-        <Card>
+        <Card className="border-zinc-200 dark:border-zinc-800">
           <CardHeader>
-            <CardTitle className="text-lg">Acciones Globales</CardTitle>
+            <CardTitle className="text-lg text-zinc-900 dark:text-zinc-100">Acciones Globales</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -184,9 +184,9 @@ const TranscriptList = ({ results }) => {
               </Button>
             </div>
             
-            <Separator className="my-4" />
+            <Separator className="my-4 bg-zinc-200 dark:bg-zinc-800" />
             
-            <div className="text-center text-xs text-gray-500 dark:text-gray-400">
+            <div className="text-center text-xs text-zinc-500 dark:text-zinc-400">
               {successCount > 1 ? 'Las transcripciones se combinarán' : 'La transcripción se procesará'} en un solo archivo
             </div>
           </CardContent>
